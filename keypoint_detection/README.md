@@ -20,22 +20,24 @@ https://doi.org/10.5281/zenodo.19146909
 
 After downloading, please arrange the dataset into the following structure:
 
+```text
 data/
-└── data/
-    ├── annotations/
-    │   ├── person_keypoints_train.json
-    │   ├── person_keypoints_val.json
-    ├── train/
-    │   ├── images
-    ├── val/
-    │   ├── images
-└── train_txtjson/
-    ├── txt
-    ├── json
+├── data/
+│   ├── annotations/
+│   │   ├── person_keypoints_train.json
+│   │   └── person_keypoints_val.json
+│   ├── train/
+│   │   └── images
+│   └── val/
+│       └── images
+├── train_txtjson/
+│   ├── txt
+│   └── json
 └── val_txtjson/
     ├── txt
-    ├── json
- 
+    └── json
+```
+
 ---
 
 ## 🛠️ 2. Environment Setup
