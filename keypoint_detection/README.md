@@ -16,7 +16,26 @@ Please download the dataset from Zenodo (your DOI link):
 ```
 https://doi.org/10.5281/zenodo.19146909
 ```
+📁 Organize Dataset
 
+After downloading, please arrange the dataset into the following structure:
+
+data/
+└── data/
+    ├── annotations/
+    │   ├── person_keypoints_train.json
+    │   ├── person_keypoints_val.json
+    ├── train/
+    │   ├── images
+    ├── val/
+    │   ├── images
+└── train_txtjson/
+    ├── txt
+    ├── json
+└── val_txtjson/
+    ├── txt
+    ├── json
+ 
 ---
 
 ## 🛠️ 2. Environment Setup
@@ -47,7 +66,7 @@ You need to replace the default config with the provided custom config adapted f
 
 Steps:
 
-1. Copy our config file (e.g., `res101_teeth.py` or `vitpose_small_teeth.py`)
+1. Copy our config file 
 2. Place it under:
 
 ```
