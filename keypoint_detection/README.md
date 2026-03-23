@@ -114,7 +114,3 @@ This project is built upon the excellent framework:
 * MMPose (OpenMMLab)
 
 ---
-
-## 📧 Contact
-
-For questions or collaborations, feel free to reach out.
