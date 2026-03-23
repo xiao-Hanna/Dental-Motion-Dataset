@@ -1,89 +1,102 @@
 import os
 import json
+import argparse
 from tqdm import tqdm
 
-# 输入路径
-data_root = "data1/data24"
-output_json = "annotations/person_keypoints_train.json"
 
-# 创建 COCO 格式的空字典
-coco_dict = {
-    "images": [],
-    "annotations": [],
-    "categories": [
-        {
-            "id": 1,
-            "name": "person",
-            "keypoints": [],
-            "skeleton": []
-        }
-    ]
-}
+def parse_args():
+    parser = argparse.ArgumentParser(description="Convert TXT keypoints to COCO format JSON")
+    parser.add_argument('--data_root', type=str, required=True,
+                        help='Path to image and txt files (e.g., data/teeth/train/images)')
+    parser.add_argument('--output', type=str, required=True,
+                        help='Output JSON path (e.g., data/teeth/annotations/person_keypoints_train.json)')
+    return parser.parse_args()
 
-ann_id = 1
-img_id = 1
 
-# 遍历所有图片
-for fname in tqdm(os.listdir(data_root)):
-    if fname.endswith(".jpg") or fname.endswith(".png"):
+def load_keypoints(txt_file):
+    keypoints = []
+
+    with open(txt_file, "r") as f:
+        for line in f:
+            line = line.strip()
+
+            if not line or line.startswith("#"):
+                continue
+
+            try:
+                parts = line.split(",")
+                if len(parts) == 2:
+                    x, y = map(float, parts)
+                    keypoints.extend([x, y, 2])
+            except ValueError:
+                print(f"[Warning] Invalid line in {txt_file}: {line}")
+
+    return keypoints
+
+
+def get_image_size(img_path):
+    try:
+        import cv2
+        img = cv2.imread(img_path)
+        h, w = img.shape[:2]
+    except:
+        h, w = 1080, 1920
+    return h, w
+
+
+def main():
+    args = parse_args()
+
+    coco_dict = {
+        "images": [],
+        "annotations": [],
+        "categories": [
+            {
+                "id": 1,
+                "name": "person",
+                "keypoints": [],
+                "skeleton": []
+            }
+        ]
+    }
+
+    ann_id = 1
+    img_id = 1
+
+    os.makedirs(os.path.dirname(args.output), exist_ok=True)
+
+    for fname in tqdm(os.listdir(args.data_root)):
+        if not fname.lower().endswith((".jpg", ".png")):
+            continue
+
         base = os.path.splitext(fname)[0]
-        img_file = os.path.join(data_root, fname)
-        txt_file = os.path.join(data_root, base + ".txt")
+        img_path = os.path.join(args.data_root, fname)
+        txt_path = os.path.join(args.data_root, base + ".txt")
 
-        if not os.path.exists(txt_file):
+        if not os.path.exists(txt_path):
             continue
 
-        # 读取关键点
-        keypoints = []
-        with open(txt_file, "r") as f:
-            lines = f.readlines()
-            for line in lines:
-                line = line.strip()
-                # 跳过空行
-                if not line:
-                    continue
-                # 跳过注释行（以#开头的行）
-                if line.startswith("#"):
-                    continue
-                try:
-                    # 尝试分割并转换为浮点数
-                    parts = line.split(",")
-                    # 确保有两个数值
-                    if len(parts) == 2:
-                        x, y = map(float, parts)
-                        keypoints.extend([x, y, 2])  # (x,y,可见度)
-                    else:
-                        print(f"警告: {txt_file} 中的行 '{line}' 格式不正确，已跳过")
-                except ValueError:
-                    # 处理无法转换为浮点数的情况
-                    print(f"警告: {txt_file} 中的行 '{line}' 包含非数值数据，已跳过")
+        keypoints = load_keypoints(txt_path)
 
-        # 如果没有有效的关键点数据，跳过此文件
         if not keypoints:
-            print(f"警告: {txt_file} 中没有有效的关键点数据，已跳过")
             continue
 
-        # 更新 category 里的关键点名字（p1, p2...）
+        # 初始化 keypoint names
         if not coco_dict["categories"][0]["keypoints"]:
             num_kpt = len(keypoints) // 3
-            coco_dict["categories"][0]["keypoints"] = [f"p{i}" for i in range(1, num_kpt + 1)]
+            coco_dict["categories"][0]["keypoints"] = [f"kpt_{i}" for i in range(num_kpt)]
 
-        # 构造 annotation
         x_coords = keypoints[0::3]
         y_coords = keypoints[1::3]
-        bbox = [min(x_coords), min(y_coords),
-                max(x_coords) - min(x_coords),
-                max(y_coords) - min(y_coords)]
 
-        # 获取真实图片尺寸（需要安装OpenCV）
-        try:
-            import cv2
+        bbox = [
+            min(x_coords),
+            min(y_coords),
+            max(x_coords) - min(x_coords),
+            max(y_coords) - min(y_coords)
+        ]
 
-            img = cv2.imread(img_file)
-            height, width = img.shape[:2]
-        except:
-            # 如果无法读取，使用默认值
-            height, width = 1080, 1920
+        height, width = get_image_size(img_path)
 
         coco_dict["images"].append({
             "id": img_id,
@@ -106,9 +119,11 @@ for fname in tqdm(os.listdir(data_root)):
         ann_id += 1
         img_id += 1
 
-# 保存 JSON
-os.makedirs("annotations", exist_ok=True)
-with open(output_json, "w") as f:
-    json.dump(coco_dict, f, indent=4)
+    with open(args.output, "w") as f:
+        json.dump(coco_dict, f, indent=4)
 
-print(f"✅ 转换完成，标注文件已保存: {output_json}")
+    print(f"✅ Done! Saved to {args.output}")
+
+
+if __name__ == "__main__":
+    main()
