@@ -17,22 +17,11 @@ This dataset is designed for dental keypoint detection tasks. It provides annota
 
 ---
 
-## 📂 Dataset Structure
+## Data Structure
 
-```
-dataset/
-├── images/
-├── keypoints/
-├── masks/
-├── videos/
-└── metadata.csv
-```
+The following diagram shows the data structure used in this project:
 
-* `images/`: original dental images
-* `keypoints/`: landmark annotations (JSON / TXT)
-* `masks/`: segmentation masks (if applicable)
-* `videos/`: original video sequences (optional)
-* `metadata.csv`: dataset index and train/val split
+![Data Structure](images/data_structure.png)
 
 ---
 
