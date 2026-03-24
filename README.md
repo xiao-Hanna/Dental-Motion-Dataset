@@ -1,10 +1,5 @@
-# Dental-Motion-Dataset
+# Mandibular Motion Tooth Dataset
 A publicly available dental dataset containing 27 mandibular movement videos and over 1,200 manually annotated oral images, along with benchmark evaluations using mainstream segmentation and keypoint detection methods.
-# Dental Keypoint Detection Dataset
-
-## 📌 Overview
-
-This dataset is designed for dental keypoint detection tasks. It provides annotated landmarks for dental images, supporting research in medical image analysis, computer vision, and mandibular motion tracking.
 
 ---
 
