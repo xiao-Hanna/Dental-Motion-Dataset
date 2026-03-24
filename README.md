@@ -24,7 +24,7 @@ The following diagram shows the data structure used in this project:
 
 The full dataset is available on Zenodo:
 
-👉 https://doi.org/10.5281/zenodo.19146909
+👉 [https://doi.org/10.5281/zenodo.19146909](https://doi.org/10.5281/zenodo.19201948)
 
 ---
 
