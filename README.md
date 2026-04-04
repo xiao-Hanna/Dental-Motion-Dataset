@@ -15,7 +15,7 @@ A publicly available dental dataset containing 27 mandibular movement videos and
 ## Data Structure
 
 The following diagram shows the data structure used in this project:
-
+![Data Structure](images/data_structure.png)
 
 
 ---
